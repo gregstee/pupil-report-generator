@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pupil Report Generator</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+
+    :root {
+      --bg:        #1a0a2e;
+      --bg2:       #16213e;
+      --win-bg:    #0d0d1a;
+      --titlebar:  #c800c8;
+      --titlebar2: #6400c8;
+      --border:    #ff00ff;
+      --border2:   #00ffff;
+      --text:      #e0e0ff;
+      --text-dim:  #a0a0cc;
+      --neon-pink: #ff00ff;
+      --neon-cyan: #00ffff;
+      --neon-yel:  #ffff00;
+      --btn-bg:    #2a0a4a;
+      --btn-hover: #4a0a8a;
+      --input-bg:  #0a0a20;
+      --shadow:    #ff00ff66;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      background-image:
+        linear-gradient(rgba(200, 0, 200, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200, 0, 200, 0.07) 1px, transparent 1px);
+      background-size: 40px 40px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 16px 48px;
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--text);
+    }
+
+    /* Scanlines overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.15) 2px,
+        rgba(0,0,0,0.15) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    h1.site-title {
+      font-family: 'VT323', monospace;
+      font-size: 2.8rem;
+      color: var(--neon-pink);
+      text-shadow: 0 0 10px var(--neon-pink), 0 0 30px var(--neon-pink), 0 0 60px #c800c8;
+      letter-spacing: 4px;
+      margin-bottom: 4px;
+      text-align: center;
+    }
+
+    p.subtitle {
+      font-family: 'VT323', monospace;
+      font-size: 1.1rem;
+      color: var(--neon-cyan);
+      text-shadow: 0 0 8px var(--neon-cyan);
+      letter-spacing: 2px;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    /* Windows 3.1-style window */
+    .window {
+      width: 100%;
+      max-width: 680px;
+      border: 2px solid var(--border);
+      box-shadow: 0 0 20px var(--shadow), inset 0 0 10px rgba(200,0,200,0.05);
+      background: var(--win-bg);
+      margin-bottom: 20px;
+    }
+
+    .title-bar {
+      background: linear-gradient(90deg, var(--titlebar), var(--titlebar2));
+      padding: 5px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .title-bar-text {
+      font-family: 'VT323', monospace;
+      font-size: 1.1rem;
+      color: #fff;
+      letter-spacing: 2px;
+      text-shadow: 0 0 6px #fff;
+    }
+
+    .title-bar-buttons {
+      display: flex;
+      gap: 4px;
+    }
+
+    .tb-btn {
+      width: 16px;
+      height: 14px;
+      background: var(--btn-bg);
+      border: 1px solid var(--border);
+      color: var(--neon-pink);
+      font-family: 'VT323', monospace;
+      font-size: 0.75rem;
+      cursor: default;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .window-body {
+      padding: 20px;
+    }
+
+    /* Form elements */
+    label {
+      display: block;
+      font-family: 'VT323', monospace;
+      font-size: 1rem;
+      color: var(--neon-cyan);
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+      text-shadow: 0 0 6px var(--neon-cyan);
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.9rem;
+      padding: 8px 10px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+      box-shadow: inset 0 0 6px rgba(0, 255, 255, 0.08);
+    }
+
+    input[type="text"]:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--neon-pink);
+      box-shadow: 0 0 8px var(--neon-pink), inset 0 0 6px rgba(255,0,255,0.1);
+    }
+
+    select option {
+      background: #0d0d2a;
+      color: var(--text);
+    }
+
+    /* Custom select arrow */
+    .select-wrap {
+      position: relative;
+    }
+    .select-wrap::after {
+      content: '▼';
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--neon-cyan);
+      pointer-events: none;
+      font-size: 0.75rem;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    .form-row {
+      margin-bottom: 16px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    /* Horizontal rule */
+    hr.win-hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 20px 0;
+      box-shadow: 0 0 4px var(--neon-pink);
+    }
+
+    /* API key row */
+    .api-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .api-row label { margin-bottom: 0; white-space: nowrap; }
+    .api-row input { flex: 1; }
+
+    /* Buttons */
+    .btn {
+      font-family: 'VT323', monospace;
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      padding: 8px 20px;
+      border: 2px solid;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: background 0.15s, box-shadow 0.15s, color 0.15s;
+      background: var(--btn-bg);
+    }
+
+    .btn-primary {
+      border-color: var(--neon-pink);
+      color: var(--neon-pink);
+      text-shadow: 0 0 6px var(--neon-pink);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--btn-hover);
+      box-shadow: 0 0 14px var(--neon-pink);
+    }
+    .btn-primary:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+      text-shadow: 0 0 6px var(--neon-cyan);
+    }
+    .btn-secondary:hover {
+      background: #0a2a3a;
+      box-shadow: 0 0 14px var(--neon-cyan);
+    }
+
+    .btn-yellow {
+      border-color: var(--neon-yel);
+      color: var(--neon-yel);
+      text-shadow: 0 0 6px var(--neon-yel);
+    }
+    .btn-yellow:hover {
+      background: #2a2a00;
+      box-shadow: 0 0 14px var(--neon-yel);
+    }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 6px;
+    }
+
+    /* Output window */
+    #output-window {
+      display: none;
+    }
+
+    #report-output {
+      background: var(--input-bg);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.88rem;
+      padding: 14px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+      word-break: break-word;
+      min-height: 120px;
+      box-shadow: inset 0 0 8px rgba(0,255,255,0.06);
+    }
+
+    /* Status bar */
+    .status-bar {
+      border-top: 1px solid var(--border);
+      padding: 4px 10px;
+      font-family: 'VT323', monospace;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-bar .indicator {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      display: inline-block;
+    }
+    .status-bar.ready .indicator   { background: #00ff88; box-shadow: 0 0 6px #00ff88; }
+    .status-bar.loading .indicator { background: var(--neon-yel); box-shadow: 0 0 6px var(--neon-yel); animation: blink 0.6s step-start infinite; }
+    .status-bar.error .indicator   { background: #ff4444; box-shadow: 0 0 6px #ff4444; }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #0a2a0a;
+      border: 1px solid #00ff88;
+      color: #00ff88;
+      font-family: 'VT323', monospace;
+      font-size: 1rem;
+      padding: 8px 24px;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      box-shadow: 0 0 12px #00ff88;
+      letter-spacing: 2px;
+      z-index: 10000;
+    }
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+
+<h1 class="site-title">&#x25A0; PUPIL REPORT GEN &#x25A0;</h1>
+<p class="subtitle">// KS2 REPORT WRITER v1.0 //</p>
+
+<!-- Input window -->
+<div class="window">
+  <div class="title-bar">
+    <span class="title-bar-text">&#x25CF; REPORT INPUT</span>
+    <div class="title-bar-buttons">
+      <div class="tb-btn">_</div>
+      <div class="tb-btn">&#x25A1;</div>
+      <div class="tb-btn">&#x00D7;</div>
+    </div>
+  </div>
+  <div class="window-body">
+
+    <!-- API Key -->
+    <div class="form-row">
+      <label for="api-key">&#x25B6; GEMINI API KEY</label>
+      <input type="password" id="api-key" placeholder="Enter your Gemini API key..." autocomplete="off" />
+    </div>
+
+    <hr class="win-hr" />
+
+    <!-- Name -->
+    <div class="form-row">
+      <label for="pupil-name">&#x25B6; PUPIL NAME</label>
+      <input type="text" id="pupil-name" placeholder="Enter pupil's name..." />
+    </div>
+
+    <!-- Subject + Ability -->
+    <div class="form-grid">
+      <div class="form-row">
+        <label for="subject">&#x25B6; SUBJECT</label>
+        <div class="select-wrap">
+          <select id="subject">
+            <option value="">-- Select --</option>
+            <option value="Science">Science</option>
+            <option value="Maths">Maths</option>
+            <option value="English">English</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <label for="ability">&#x25B6; ABILITY</label>
+        <div class="select-wrap">
+          <select id="ability">
+            <option value="">-- Select --</option>
+            <option value="at target">At Target</option>
+            <option value="working towards target">Working Towards Target</option>
+            <option value="below target">Below Target</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes -->
+    <div class="form-row">
+      <label for="notes">&#x25B6; TEACHER NOTES</label>
+      <textarea id="notes" placeholder="Enter your observations, achievements, areas for development..."></textarea>
+    </div>
+
+    <div class="button-row">
+      <button class="btn btn-primary" id="generate-btn" onclick="generateReport()">&#x25BA; GENERATE REPORT</button>
+      <button class="btn btn-yellow" onclick="clearForm()">&#x25C4; CLEAR FORM</button>
+    </div>
+
+  </div>
+  <div class="status-bar" id="status-bar">
+    <span class="indicator"></span>
+    <span id="status-text">READY</span>
+  </div>
+</div>
+
+<!-- Output window -->
+<div class="window" id="output-window">
+  <div class="title-bar">
+    <span class="title-bar-text">&#x25CF; GENERATED REPORT</span>
+    <div class="title-bar-buttons">
+      <div class="tb-btn">_</div>
+      <div class="tb-btn">&#x25A1;</div>
+      <div class="tb-btn">&#x00D7;</div>
+    </div>
+  </div>
+  <div class="window-body">
+    <div id="report-output"></div>
+    <div class="button-row" style="margin-top:14px;">
+      <button class="btn btn-secondary" onclick="copyReport()">&#x25A3; COPY TO CLIPBOARD</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast">&#x2714; COPIED TO CLIPBOARD</div>
+
+<script>
+  function setStatus(state, msg) {
+    const bar = document.getElementById('status-bar');
+    bar.className = 'status-bar ' + state;
+    document.getElementById('status-text').textContent = msg;
+  }
+
+  async function generateReport() {
+    const apiKey  = document.getElementById('api-key').value.trim();
+    const name    = document.getElementById('pupil-name').value.trim();
+    const subject = document.getElementById('subject').value;
+    const ability = document.getElementById('ability').value;
+    const notes   = document.getElementById('notes').value.trim();
+
+    if (!apiKey)  { setStatus('error', 'ERROR: API KEY REQUIRED'); return; }
+    if (!name)    { setStatus('error', 'ERROR: PUPIL NAME REQUIRED'); return; }
+    if (!subject) { setStatus('error', 'ERROR: PLEASE SELECT A SUBJECT'); return; }
+    if (!ability) { setStatus('error', 'ERROR: PLEASE SELECT ABILITY LEVEL'); return; }
+    if (!notes)   { setStatus('error', 'ERROR: TEACHER NOTES REQUIRED'); return; }
+
+    const btn = document.getElementById('generate-btn');
+    btn.disabled = true;
+    setStatus('loading', 'GENERATING REPORT...');
+    document.getElementById('output-window').style.display = 'none';
+
+    const prompt = `You are an experienced primary school teacher writing an end-of-year school report for a pupil aged 7-8 years old (Key Stage 2, Year 3/4).
+
+Write a formal, warm, and encouraging written report paragraph for the following pupil. The report should:
+- Be written in third person (e.g. "Sam has...")
+- Be 3-5 sentences long
+- Be appropriate for parents/guardians to read
+- Reflect the pupil's ability level honestly but constructively
+- Include specific mention of the subject
+- Reference the teacher's notes naturally
+- End with a forward-looking, encouraging sentence
+
+Pupil Name: ${name}
+Subject: ${subject}
+Ability Level: ${ability}
+Teacher Notes: ${notes}
+
+Write only the report paragraph, with no preamble or labels.`;
+
+    try {
+      const res = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.7, maxOutputTokens: 400 }
+          })
+        }
+      );
+
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        const msg = err?.error?.message || `HTTP ${res.status}`;
+        throw new Error(msg);
+      }
+
+      const data = await res.json();
+      const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (!text) throw new Error('No response from model');
+
+      document.getElementById('report-output').textContent = text.trim();
+      document.getElementById('output-window').style.display = 'block';
+      document.getElementById('output-window').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setStatus('ready', 'REPORT GENERATED OK');
+
+    } catch (e) {
+      setStatus('error', 'ERROR: ' + e.message.toUpperCase().slice(0, 60));
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function copyReport() {
+    const text = document.getElementById('report-output').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }).catch(() => {
+      // Fallback for older browsers
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    });
+  }
+
+  function clearForm() {
+    document.getElementById('pupil-name').value = '';
+    document.getElementById('subject').value = '';
+    document.getElementById('ability').value = '';
+    document.getElementById('notes').value = '';
+    document.getElementById('output-window').style.display = 'none';
+    document.getElementById('report-output').textContent = '';
+    setStatus('', 'READY');
+    document.getElementById('pupil-name').focus();
+  }
+
+  // Allow Enter on text input to trigger generation
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.ctrlKey) generateReport();
+  });
+</script>
+</body>
+</html>
