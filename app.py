@@ -301,9 +301,9 @@ with col2:
     ability = st.selectbox("▶ ABILITY", ["", "Greater Depth", "At Expected", "Towards Expected", "Below Expected"], key=f"ability_{v}")
 col3, col4 = st.columns(2)
 with col3:
-    pronouns = st.selectbox("▶ PUPIL PRONOUNS", ["he / him", "she / her", "they / them"], key=f"pronouns_{v}")
+    pronouns = st.selectbox("▶ PUPIL PRONOUNS", ["", "he / him", "she / her", "they / them"], key=f"pronouns_{v}")
 with col4:
-    report_length = st.selectbox("▶ REPORT LENGTH", ["50 - 100 words", "100 - 150 words", "150 - 200 words", "200 - 250 words"], index=1, key=f"length_{v}")
+    report_length = st.selectbox("▶ REPORT LENGTH", ["", "50 - 100 words", "100 - 150 words", "150 - 200 words", "200 - 250 words"], key=f"length_{v}")
 notes   = st.text_area("▶ TEACHER NOTES", placeholder="Enter your observations, achievements, areas for development...", height=120, key=f"notes_{v}")
 
 col_gen, col_clear = st.columns([2, 1])
@@ -324,7 +324,8 @@ if generate:
     if not subject: errors.append("PLEASE SELECT A SUBJECT")
     if not ability: errors.append("PLEASE SELECT ABILITY LEVEL")
     if not notes:   errors.append("TEACHER NOTES REQUIRED")
-    if not pronouns: errors.append("PLEASE SELECT PRONOUNS")
+    if not pronouns:      errors.append("PLEASE SELECT PRONOUNS")
+    if not report_length: errors.append("PLEASE SELECT REPORT LENGTH")
 
     if errors:
         for e in errors:
