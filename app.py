@@ -298,7 +298,12 @@ col1, col2 = st.columns(2)
 with col1:
     subject = st.selectbox("▶ SUBJECT", ["", "Science", "Maths", "English"], key=f"subject_{v}")
 with col2:
-    ability = st.selectbox("▶ ABILITY", ["", "At Expected", "Towards Expected", "Below Expected"], key=f"ability_{v}")
+    ability = st.selectbox("▶ ABILITY", ["", "Greater Depth", "At Expected", "Towards Expected", "Below Expected"], key=f"ability_{v}")
+col3, col4 = st.columns(2)
+with col3:
+    pronouns = st.selectbox("▶ PUPIL PRONOUNS", ["he / him", "she / her", "they / them"], key=f"pronouns_{v}")
+with col4:
+    report_length = st.selectbox("▶ REPORT LENGTH", ["50 - 100 words", "100 - 150 words", "150 - 200 words", "200 - 250 words"], index=1, key=f"length_{v}")
 notes   = st.text_area("▶ TEACHER NOTES", placeholder="Enter your observations, achievements, areas for development...", height=120, key=f"notes_{v}")
 
 col_gen, col_clear = st.columns([2, 1])
@@ -319,12 +324,19 @@ if generate:
     if not subject: errors.append("PLEASE SELECT A SUBJECT")
     if not ability: errors.append("PLEASE SELECT ABILITY LEVEL")
     if not notes:   errors.append("TEACHER NOTES REQUIRED")
+    if not pronouns: errors.append("PLEASE SELECT PRONOUNS")
 
     if errors:
         for e in errors:
             st.error(f"⛔ ERROR: {e}")
     else:
         api_key = st.secrets["GEMINI_API_KEY"]
+
+        subject_pronoun, object_pronoun, possessive_pronoun = {
+            "he / him":    ("He", "him", "his"),
+            "she / her":   ("She", "her", "her"),
+            "they / them": ("They", "them", "their"),
+        }[pronouns]
 
         prompt = f"""You are an experienced primary school teacher writing an end-of-year school report for a pupil aged 7-8 years old (Key Stage 2, Year 3/4).
 
@@ -339,11 +351,12 @@ Child A enjoys taking part in English lessons and particularly likes listening t
 EXAMPLE 3 (Below Target):
 Child A enjoys taking part in English lessons and particularly likes listening to stories and sharing their ideas during class discussions. They are currently working below the expected standard in English and find some aspects of reading and writing challenging. Child A is developing their reading skills and is beginning to use what they have learned from reading to support their writing, although they require regular support and guidance to do this successfully. They listen carefully to instructions and are working hard to include key features and punctuation in their writing. With continued practice, targeted support and encouragement, Child A will continue to develop their confidence and make progress in their English learning.
 
-Now write a report in exactly the same style for the following pupil. Replace "Child A" with the pupil's actual name. Write only the report paragraph, with no preamble or labels.
+Now write a report in exactly the same style for the following pupil. Replace "Child A" with the pupil's actual name. Use the pronouns {subject_pronoun}/{object_pronoun}/{possessive_pronoun} throughout — do not use "they/them" unless specified. The report must be {report_length}. Write only the report paragraph, with no preamble or labels.
 
 Pupil Name: {name}
 Subject: {subject}
 Ability Level: {ability}
+Pronouns: {subject_pronoun}/{object_pronoun}/{possessive_pronoun}
 Teacher Notes: {notes}"""
 
         with st.spinner("GENERATING REPORT..."):
