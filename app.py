@@ -11,7 +11,6 @@ st.markdown("""
   --desktop:    #008080;
   --win-bg:     #c0c0c0;
   --titlebar:   #000080;
-  --title-text: #ffffff;
   --text:       #000000;
   --input-bg:   #ffffff;
   --border-lt:  #ffffff;
@@ -30,7 +29,6 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
   background: transparent !important;
 }
 
-/* Inputs */
 input, textarea, select {
   background: var(--input-bg) !important;
   border-top: 2px solid var(--border-dk) !important;
@@ -43,7 +41,6 @@ input, textarea, select {
   border-radius: 0 !important;
 }
 
-/* Labels */
 label, [data-testid="stWidgetLabel"] p {
   font-family: 'VT323', monospace !important;
   font-size: 1.1rem !important;
@@ -51,7 +48,6 @@ label, [data-testid="stWidgetLabel"] p {
   letter-spacing: 0px !important;
 }
 
-/* Buttons — raised 3D Win3.1 style */
 .stButton > button {
   background: var(--btn-face) !important;
   border-top: 2px solid var(--border-lt) !important;
@@ -67,9 +63,7 @@ label, [data-testid="stWidgetLabel"] p {
   padding: 0.3rem 1.2rem !important;
   box-shadow: none !important;
 }
-.stButton > button:hover {
-  background: #d4d0c8 !important;
-}
+.stButton > button:hover { background: #d4d0c8 !important; }
 .stButton > button:active {
   border-top: 2px solid var(--border-blk) !important;
   border-left: 2px solid var(--border-blk) !important;
@@ -77,7 +71,6 @@ label, [data-testid="stWidgetLabel"] p {
   border-bottom: 2px solid var(--border-lt) !important;
 }
 
-/* Select dropdown */
 [data-baseweb="select"] > div {
   background: var(--input-bg) !important;
   border-top: 2px solid var(--border-dk) !important;
@@ -88,7 +81,6 @@ label, [data-testid="stWidgetLabel"] p {
   color: var(--text) !important;
 }
 
-/* Output text area */
 .stTextArea textarea {
   background: var(--input-bg) !important;
   border-top: 2px solid var(--border-dk) !important;
@@ -102,7 +94,6 @@ label, [data-testid="stWidgetLabel"] p {
   border-radius: 0 !important;
 }
 
-/* Alerts */
 [data-testid="stAlert"] {
   background: var(--win-bg) !important;
   border-radius: 0 !important;
@@ -110,9 +101,145 @@ label, [data-testid="stWidgetLabel"] p {
   color: var(--text) !important;
 }
 
-/* Hide Streamlit chrome */
+/* ── 90s decorations ── */
+@keyframes blink    { 50% { opacity: 0; } }
+@keyframes spin     { to  { transform: rotate(360deg); } }
+@keyframes rainbow  {
+  0%  { color: #ff0000; } 14% { color: #ff8800; }
+  28% { color: #ffff00; } 42% { color: #00cc00; }
+  57% { color: #0000ff; } 71% { color: #8800ff; }
+  85% { color: #ff00ff; } 100%{ color: #ff0000; }
+}
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-8px); }
+}
+@keyframes marquee { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+
+.blink    { animation: blink 1s step-start infinite; }
+.spin     { display:inline-block; animation: spin 3s linear infinite; }
+.rainbow  { animation: rainbow 2s linear infinite; font-weight:bold; }
+.bounce   { display:inline-block; animation: bounce 1s ease-in-out infinite; }
+
+.marquee-track {
+  overflow: hidden;
+  background: #000080;
+  color: #ffff00;
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  padding: 4px 0;
+  border-top: 2px solid #ffffff;
+  border-bottom: 2px solid #000000;
+  white-space: nowrap;
+}
+.marquee-inner {
+  display: inline-block;
+  animation: marquee 18s linear infinite;
+}
+
+.side-panel {
+  position: fixed;
+  top: 0; bottom: 0;
+  width: 110px;
+  background: #000080;
+  border: 2px solid #c0c0c0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 4px;
+  gap: 14px;
+  z-index: 100;
+  overflow: hidden;
+}
+.side-panel.left  { left: 0; }
+.side-panel.right { right: 0; }
+
+.gif-frame {
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #ffffff;
+  border-bottom: 2px solid #ffffff;
+  padding: 2px;
+  background: #c0c0c0;
+  text-align: center;
+}
+.gif-frame img { display: block; max-width: 80px; }
+
+.new-badge {
+  background: #ff0000;
+  color: #ffff00;
+  font-family: 'VT323', monospace;
+  font-size: 1rem;
+  padding: 2px 6px;
+  border: 2px solid #ffff00;
+  animation: blink 0.8s step-start infinite;
+}
+
+.counter-box {
+  background: #000000;
+  color: #00ff00;
+  font-family: 'VT323', monospace;
+  font-size: 0.9rem;
+  padding: 4px 6px;
+  border: 1px solid #00ff00;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.side-star {
+  font-size: 1.4rem;
+  animation: spin 4s linear infinite;
+  display: block;
+}
+
+.under-con {
+  font-family: 'VT323', monospace;
+  font-size: 0.75rem;
+  color: #ffff00;
+  text-align: center;
+  line-height: 1.4;
+  animation: blink 1.5s step-start infinite;
+}
+
+/* Push main content away from fixed panels */
+[data-testid="block-container"] {
+  padding-left: 120px !important;
+  padding-right: 120px !important;
+}
+
 #MainMenu, footer, header { visibility: hidden; }
 </style>
+
+<!-- Left panel -->
+<div class="side-panel left">
+  <img src="https://media.giphy.com/media/xT9IgDEI1iZyb2wqo8/giphy.gif" style="max-width:80px;border:1px solid #ffff00;" alt="star">
+  <div class="new-badge">★ NEW ★</div>
+  <img src="https://media.giphy.com/media/3o7TKDt29tMd8FVTNA/giphy.gif" style="max-width:80px;border:1px solid #ffff00;" alt="construction">
+  <div class="counter-box">VISITORS<br>001337</div>
+  <span class="side-star">⭐</span>
+  <img src="https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif" style="max-width:80px;border:1px solid #ffff00;" alt="spinning">
+  <div class="under-con">🔨 UNDER<br>CONSTRUCTION<br>🔨</div>
+</div>
+
+<!-- Right panel -->
+<div class="side-panel right">
+  <img src="https://media.giphy.com/media/xT9IgDEI1iZyb2wqo8/giphy.gif" style="max-width:80px;border:1px solid #ffff00;" alt="star">
+  <div class="new-badge">HOT!</div>
+  <span class="side-star">🌟</span>
+  <img src="https://media.giphy.com/media/3o7TKDt29tMd8FVTNA/giphy.gif" style="max-width:80px;border:1px solid #ffff00;" alt="animation">
+  <div style="font-family:'VT323',monospace;font-size:0.7rem;color:#00ffff;text-align:center;line-height:1.4;">
+    BEST VIEWED IN<br>800x600<br>NETSCAPE 4.0
+  </div>
+  <span class="side-star">💫</span>
+  <img src="https://media.giphy.com/media/26BRv0ThflsHCqDrG/giphy.gif" style="max-width:80px;border:1px solid #ffff00;" alt="spinning">
+</div>
+
+<!-- Marquee banner -->
+<div class="marquee-track">
+  <span class="marquee-inner">
+    ★ WELCOME TO THE OFFICIAL KS2 PUPIL REPORT GENERATOR ★ BEST VIEWED IN NETSCAPE NAVIGATOR 4.0 AT 800x600 ★ NO UNAUTHORISED COPYING ★ THIS SITE IS UNDER CONSTRUCTION ★ PLEASE SIGN OUR GUESTBOOK ★
+  </span>
+</div>
 """, unsafe_allow_html=True)
 
 # Title
@@ -121,9 +248,9 @@ st.markdown("""
   letter-spacing:2px;text-align:center;margin-bottom:2px;text-shadow:1px 1px #000000;">
   Pupil Report Generator
 </h1>
-<p style="font-family:'VT323',monospace;font-size:1rem;color:#ffffff;
-  letter-spacing:1px;text-align:center;margin-bottom:1rem;">
-  KS2 Report Writer v1.0
+<p style="font-family:'VT323',monospace;font-size:1rem;color:#ffff00;
+  letter-spacing:1px;text-align:center;margin-bottom:1rem;" class="blink">
+  ~*~ KS2 Report Writer v1.0 ~*~
 </p>
 """, unsafe_allow_html=True)
 
