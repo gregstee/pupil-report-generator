@@ -5,32 +5,24 @@ st.set_page_config(page_title="Pupil Report Generator", page_icon="▪", layout=
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
 
 :root {
-  --bg:        #1a0a2e;
-  --bg2:       #16213e;
-  --win-bg:    #0d0d1a;
-  --titlebar:  #c800c8;
-  --titlebar2: #6400c8;
-  --border:    #ff00ff;
-  --border2:   #00ffff;
-  --text:      #e0e0ff;
-  --text-dim:  #a0a0cc;
-  --neon-pink: #ff00ff;
-  --neon-cyan: #00ffff;
-  --neon-yel:  #ffff00;
-  --btn-bg:    #2a0a4a;
-  --input-bg:  #0a0a20;
+  --desktop:    #008080;
+  --win-bg:     #c0c0c0;
+  --titlebar:   #000080;
+  --title-text: #ffffff;
+  --text:       #000000;
+  --input-bg:   #ffffff;
+  --border-lt:  #ffffff;
+  --border-dk:  #808080;
+  --border-blk: #000000;
+  --btn-face:   #c0c0c0;
 }
 
 html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
-  background-color: var(--bg) !important;
-  background-image:
-    linear-gradient(rgba(200,0,200,0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(200,0,200,0.07) 1px, transparent 1px);
-  background-size: 40px 40px;
-  font-family: 'Share Tech Mono', monospace !important;
+  background-color: var(--desktop) !important;
+  font-family: 'VT323', monospace !important;
   color: var(--text) !important;
 }
 
@@ -38,63 +30,60 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
   background: transparent !important;
 }
 
-/* Scanlines */
-[data-testid="stApp"]::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg, transparent, transparent 2px,
-    rgba(0,0,0,0.15) 2px, rgba(0,0,0,0.15) 4px
-  );
-  pointer-events: none;
-  z-index: 9999;
-}
-
 /* Inputs */
 input, textarea, select {
   background: var(--input-bg) !important;
-  border: 1px solid var(--border2) !important;
+  border-top: 2px solid var(--border-dk) !important;
+  border-left: 2px solid var(--border-dk) !important;
+  border-right: 2px solid var(--border-lt) !important;
+  border-bottom: 2px solid var(--border-lt) !important;
   color: var(--text) !important;
-  font-family: 'Share Tech Mono', monospace !important;
+  font-family: 'VT323', monospace !important;
+  font-size: 1rem !important;
   border-radius: 0 !important;
-}
-input:focus, textarea:focus {
-  border-color: var(--neon-pink) !important;
-  box-shadow: 0 0 8px var(--neon-pink) !important;
 }
 
 /* Labels */
 label, [data-testid="stWidgetLabel"] p {
   font-family: 'VT323', monospace !important;
-  font-size: 1rem !important;
-  color: var(--neon-cyan) !important;
-  text-shadow: 0 0 6px var(--neon-cyan) !important;
-  letter-spacing: 1px !important;
+  font-size: 1.1rem !important;
+  color: var(--text) !important;
+  letter-spacing: 0px !important;
 }
 
-/* Buttons */
+/* Buttons — raised 3D Win3.1 style */
 .stButton > button {
-  background: var(--btn-bg) !important;
-  border: 2px solid var(--neon-pink) !important;
-  color: var(--neon-pink) !important;
+  background: var(--btn-face) !important;
+  border-top: 2px solid var(--border-lt) !important;
+  border-left: 2px solid var(--border-lt) !important;
+  border-right: 2px solid var(--border-blk) !important;
+  border-bottom: 2px solid var(--border-blk) !important;
+  color: var(--text) !important;
   font-family: 'VT323', monospace !important;
   font-size: 1.1rem !important;
-  letter-spacing: 2px !important;
+  letter-spacing: 1px !important;
   text-transform: uppercase !important;
   border-radius: 0 !important;
-  text-shadow: 0 0 6px var(--neon-pink) !important;
   padding: 0.3rem 1.2rem !important;
+  box-shadow: none !important;
 }
 .stButton > button:hover {
-  background: #4a0a8a !important;
-  box-shadow: 0 0 14px var(--neon-pink) !important;
+  background: #d4d0c8 !important;
+}
+.stButton > button:active {
+  border-top: 2px solid var(--border-blk) !important;
+  border-left: 2px solid var(--border-blk) !important;
+  border-right: 2px solid var(--border-lt) !important;
+  border-bottom: 2px solid var(--border-lt) !important;
 }
 
 /* Select dropdown */
 [data-baseweb="select"] > div {
   background: var(--input-bg) !important;
-  border: 1px solid var(--border2) !important;
+  border-top: 2px solid var(--border-dk) !important;
+  border-left: 2px solid var(--border-dk) !important;
+  border-right: 2px solid var(--border-lt) !important;
+  border-bottom: 2px solid var(--border-lt) !important;
   border-radius: 0 !important;
   color: var(--text) !important;
 }
@@ -102,19 +91,23 @@ label, [data-testid="stWidgetLabel"] p {
 /* Output text area */
 .stTextArea textarea {
   background: var(--input-bg) !important;
-  border: 1px solid var(--border2) !important;
+  border-top: 2px solid var(--border-dk) !important;
+  border-left: 2px solid var(--border-dk) !important;
+  border-right: 2px solid var(--border-lt) !important;
+  border-bottom: 2px solid var(--border-lt) !important;
   color: var(--text) !important;
-  font-family: 'Share Tech Mono', monospace !important;
-  font-size: 0.88rem !important;
-  line-height: 1.7 !important;
+  font-family: 'VT323', monospace !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
   border-radius: 0 !important;
 }
 
 /* Alerts */
 [data-testid="stAlert"] {
-  background: var(--input-bg) !important;
+  background: var(--win-bg) !important;
   border-radius: 0 !important;
-  font-family: 'Share Tech Mono', monospace !important;
+  font-family: 'VT323', monospace !important;
+  color: var(--text) !important;
 }
 
 /* Hide Streamlit chrome */
@@ -124,26 +117,33 @@ label, [data-testid="stWidgetLabel"] p {
 
 # Title
 st.markdown("""
-<h1 style="font-family:'VT323',monospace;font-size:2.8rem;color:#ff00ff;
-  text-shadow:0 0 10px #ff00ff,0 0 30px #ff00ff,0 0 60px #c800c8;
-  letter-spacing:4px;text-align:center;margin-bottom:4px;">
-  &#x25A0; PUPIL REPORT GEN &#x25A0;
+<h1 style="font-family:'VT323',monospace;font-size:2.4rem;color:#ffffff;
+  letter-spacing:2px;text-align:center;margin-bottom:2px;text-shadow:1px 1px #000000;">
+  Pupil Report Generator
 </h1>
-<p style="font-family:'VT323',monospace;font-size:1.1rem;color:#00ffff;
-  text-shadow:0 0 8px #00ffff;letter-spacing:2px;text-align:center;margin-bottom:1.5rem;">
-  // KS2 REPORT WRITER v1.0 //
+<p style="font-family:'VT323',monospace;font-size:1rem;color:#ffffff;
+  letter-spacing:1px;text-align:center;margin-bottom:1rem;">
+  KS2 Report Writer v1.0
 </p>
 """, unsafe_allow_html=True)
 
-# Window border
-st.markdown("""<div style="border:2px solid #ff00ff;
-  box-shadow:0 0 20px #ff00ff66;padding:20px;background:#0d0d1a;margin-bottom:1rem;">
-<div style="background:linear-gradient(90deg,#c800c8,#6400c8);padding:5px 10px;
-  margin:-20px -20px 16px -20px;border-bottom:1px solid #ff00ff;
-  font-family:'VT323',monospace;color:white;letter-spacing:2px;
-  display:flex;justify-content:space-between;">
-  <span>&#x25CF; REPORT INPUT</span><span>_ &#x25A1; &#x00D7;</span>
+# Window border — Win3.1 raised panel
+st.markdown("""<div style="
+  border-top:2px solid #ffffff;border-left:2px solid #ffffff;
+  border-right:2px solid #000000;border-bottom:2px solid #000000;
+  padding:2px;background:#c0c0c0;margin-bottom:1rem;">
+<div style="background:#000080;padding:4px 8px;
+  margin-bottom:12px;
+  font-family:'VT323',monospace;color:white;font-size:1rem;letter-spacing:1px;
+  display:flex;justify-content:space-between;align-items:center;">
+  <span>&#x25CF; Report Input</span>
+  <span style="display:flex;gap:4px;">
+    <span style="border:1px solid #808080;background:#c0c0c0;color:#000;padding:0 5px;font-size:0.8rem;">_</span>
+    <span style="border:1px solid #808080;background:#c0c0c0;color:#000;padding:0 4px;font-size:0.8rem;">&#x25A1;</span>
+    <span style="border:1px solid #808080;background:#c0c0c0;color:#000;padding:0 4px;font-size:0.8rem;">&#x00D7;</span>
+  </span>
 </div>
+<div style="padding:0 12px 12px 12px;">
 """, unsafe_allow_html=True)
 
 name    = st.text_input("▶ PUPIL NAME", placeholder="Enter pupil's name...")
@@ -160,7 +160,7 @@ with col_gen:
 with col_clear:
     clear = st.button("◄ CLEAR FORM")
 
-st.markdown("</div>", unsafe_allow_html=True)
+st.markdown("</div></div>", unsafe_allow_html=True)
 
 if clear:
     st.rerun()
@@ -209,17 +209,24 @@ Write only the report paragraph, with no preamble or labels."""
             data = res.json()
             report = data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
             if report:
-                st.markdown("""<div style="border:2px solid #ff00ff;
-                  box-shadow:0 0 20px #ff00ff66;padding:20px;background:#0d0d1a;margin-top:1rem;">
-                <div style="background:linear-gradient(90deg,#c800c8,#6400c8);padding:5px 10px;
-                  margin:-20px -20px 16px -20px;border-bottom:1px solid #ff00ff;
-                  font-family:'VT323',monospace;color:white;letter-spacing:2px;
-                  display:flex;justify-content:space-between;">
-                  <span>&#x25CF; GENERATED REPORT</span><span>_ &#x25A1; &#x00D7;</span>
+                st.markdown("""<div style="
+                  border-top:2px solid #ffffff;border-left:2px solid #ffffff;
+                  border-right:2px solid #000000;border-bottom:2px solid #000000;
+                  padding:2px;background:#c0c0c0;margin-top:1rem;">
+                <div style="background:#000080;padding:4px 8px;margin-bottom:12px;
+                  font-family:'VT323',monospace;color:white;font-size:1rem;letter-spacing:1px;
+                  display:flex;justify-content:space-between;align-items:center;">
+                  <span>&#x25CF; Generated Report</span>
+                  <span style="display:flex;gap:4px;">
+                    <span style="border:1px solid #808080;background:#c0c0c0;color:#000;padding:0 5px;font-size:0.8rem;">_</span>
+                    <span style="border:1px solid #808080;background:#c0c0c0;color:#000;padding:0 4px;font-size:0.8rem;">&#x25A1;</span>
+                    <span style="border:1px solid #808080;background:#c0c0c0;color:#000;padding:0 4px;font-size:0.8rem;">&#x00D7;</span>
+                  </span>
                 </div>
+                <div style="padding:0 12px 12px 12px;">
                 """, unsafe_allow_html=True)
                 st.text_area("", value=report, height=180, key="report_out")
-                st.markdown("</div>", unsafe_allow_html=True)
+                st.markdown("</div></div>", unsafe_allow_html=True)
             else:
                 st.error("⛔ ERROR: NO RESPONSE FROM MODEL")
         else:
