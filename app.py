@@ -209,6 +209,17 @@ label, [data-testid="stWidgetLabel"] p {
 
 #MainMenu, footer, header { visibility: hidden; }
 </style>
+<script>
+setTimeout(function() {
+  document.querySelectorAll('.blink, .spin, .rainbow, .bounce, .under-con, .new-badge, .side-star').forEach(function(el) {
+    el.style.animation = 'none';
+  });
+  document.querySelectorAll('.marquee-inner').forEach(function(el) {
+    el.style.animation = 'none';
+    el.style.transform = 'translateX(0)';
+  });
+}, 30000);
+</script>
 
 <!-- Left panel -->
 <div class="side-panel left">
@@ -273,13 +284,13 @@ st.markdown("""<div style="
 <div style="padding:0 12px 12px 12px;">
 """, unsafe_allow_html=True)
 
-name    = st.text_input("▶ PUPIL NAME", placeholder="Enter pupil's name...")
+name    = st.text_input("▶ PUPIL NAME", placeholder="Enter pupil's name...", key="pupil_name")
 col1, col2 = st.columns(2)
 with col1:
-    subject = st.selectbox("▶ SUBJECT", ["", "Science", "Maths", "English"])
+    subject = st.selectbox("▶ SUBJECT", ["", "Science", "Maths", "English"], key="subject")
 with col2:
-    ability = st.selectbox("▶ ABILITY", ["", "At Expected", "Towards Expected", "Below Expected"])
-notes   = st.text_area("▶ TEACHER NOTES", placeholder="Enter your observations, achievements, areas for development...", height=120)
+    ability = st.selectbox("▶ ABILITY", ["", "At Expected", "Towards Expected", "Below Expected"], key="ability")
+notes   = st.text_area("▶ TEACHER NOTES", placeholder="Enter your observations, achievements, areas for development...", height=120, key="notes")
 
 col_gen, col_clear = st.columns([2, 1])
 with col_gen:
@@ -290,6 +301,9 @@ with col_clear:
 st.markdown("</div></div>", unsafe_allow_html=True)
 
 if clear:
+    for key in ["pupil_name", "subject", "ability", "notes", "report_out"]:
+        if key in st.session_state:
+            del st.session_state[key]
     st.rerun()
 
 if generate:
