@@ -209,6 +209,15 @@ label, [data-testid="stWidgetLabel"] p {
 }
 
 #MainMenu, footer, header { visibility: hidden; }
+
+@media (max-width: 768px) {
+  .side-panel { display: none !important; }
+  .marquee-track { display: none !important; }
+  [data-testid="block-container"] {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+}
 </style>
 <!-- Left panel -->
 <div class="side-panel left">
