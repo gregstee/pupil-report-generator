@@ -288,13 +288,18 @@ st.markdown("""<div style="
 <div style="padding:0 12px 12px 12px;">
 """, unsafe_allow_html=True)
 
-name    = st.text_input("▶ PUPIL NAME", placeholder="Enter pupil's name...", key="pupil_name")
+if "form_version" not in st.session_state:
+    st.session_state.form_version = 0
+
+v = st.session_state.form_version
+
+name    = st.text_input("▶ PUPIL NAME", placeholder="Enter pupil's name...", key=f"pupil_name_{v}")
 col1, col2 = st.columns(2)
 with col1:
-    subject = st.selectbox("▶ SUBJECT", ["", "Science", "Maths", "English"], key="subject")
+    subject = st.selectbox("▶ SUBJECT", ["", "Science", "Maths", "English"], key=f"subject_{v}")
 with col2:
-    ability = st.selectbox("▶ ABILITY", ["", "At Expected", "Towards Expected", "Below Expected"], key="ability")
-notes   = st.text_area("▶ TEACHER NOTES", placeholder="Enter your observations, achievements, areas for development...", height=120, key="notes")
+    ability = st.selectbox("▶ ABILITY", ["", "At Expected", "Towards Expected", "Below Expected"], key=f"ability_{v}")
+notes   = st.text_area("▶ TEACHER NOTES", placeholder="Enter your observations, achievements, areas for development...", height=120, key=f"notes_{v}")
 
 col_gen, col_clear = st.columns([2, 1])
 with col_gen:
@@ -305,9 +310,7 @@ with col_clear:
 st.markdown("</div></div>", unsafe_allow_html=True)
 
 if clear:
-    for key in ["pupil_name", "subject", "ability", "notes", "report_out"]:
-        if key in st.session_state:
-            del st.session_state[key]
+    st.session_state.form_version += 1
     st.rerun()
 
 if generate:
