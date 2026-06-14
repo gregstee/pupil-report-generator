@@ -151,7 +151,7 @@ col1, col2 = st.columns(2)
 with col1:
     subject = st.selectbox("▶ SUBJECT", ["", "Science", "Maths", "English"])
 with col2:
-    ability = st.selectbox("▶ ABILITY", ["", "At Target", "Working Towards Target", "Below Target"])
+    ability = st.selectbox("▶ ABILITY", ["", "At Expected", "Towards Expected", "Below Expected"])
 notes   = st.text_area("▶ TEACHER NOTES", placeholder="Enter your observations, achievements, areas for development...", height=120)
 
 col_gen, col_clear = st.columns([2, 1])
