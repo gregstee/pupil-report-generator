@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import requests
 
 st.set_page_config(page_title="Pupil Report Generator", page_icon="▪", layout="centered")
@@ -209,18 +210,6 @@ label, [data-testid="stWidgetLabel"] p {
 
 #MainMenu, footer, header { visibility: hidden; }
 </style>
-<script>
-setTimeout(function() {
-  document.querySelectorAll('.blink, .spin, .rainbow, .bounce, .under-con, .new-badge, .side-star').forEach(function(el) {
-    el.style.animation = 'none';
-  });
-  document.querySelectorAll('.marquee-inner').forEach(function(el) {
-    el.style.animation = 'none';
-    el.style.transform = 'translateX(0)';
-  });
-}, 30000);
-</script>
-
 <!-- Left panel -->
 <div class="side-panel left">
   <img src="https://media.giphy.com/media/xT9IgDEI1iZyb2wqo8/giphy.gif" style="max-width:80px;border:1px solid #ffff00;" alt="star">
@@ -252,6 +241,21 @@ setTimeout(function() {
   </span>
 </div>
 """, unsafe_allow_html=True)
+
+components.html("""
+<script>
+setTimeout(function() {
+  var doc = window.parent.document;
+  doc.querySelectorAll('.blink, .spin, .rainbow, .bounce, .under-con, .new-badge, .side-star').forEach(function(el) {
+    el.style.animation = 'none';
+  });
+  doc.querySelectorAll('.marquee-inner').forEach(function(el) {
+    el.style.animation = 'none';
+    el.style.transform = 'translateX(0)';
+  });
+}, 30000);
+</script>
+""", height=0)
 
 # Title
 st.markdown("""
