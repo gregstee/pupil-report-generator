@@ -180,21 +180,23 @@ if generate:
 
         prompt = f"""You are an experienced primary school teacher writing an end-of-year school report for a pupil aged 7-8 years old (Key Stage 2, Year 3/4).
 
-Write a formal, warm, and encouraging written report paragraph for the following pupil. The report should:
-- Be written in third person (e.g. "Sam has...")
-- Be 3-5 sentences long
-- Be appropriate for parents/guardians to read
-- Reflect the pupil's ability level honestly but constructively
-- Include specific mention of the subject
-- Reference the teacher's notes naturally
-- End with a forward-looking, encouraging sentence
+Here are three example reports showing the expected style, tone, and length. The first is for a pupil at target, the second working towards target, and the third below target:
+
+EXAMPLE 1 (At Target):
+Child A has a real enthusiasm for English and thoroughly enjoys listening to stories, participating in discussions, and writing for a range of purposes. They are reading at the expected standard, which is supporting the development of their writing skills. Child A listens carefully to instructions and works hard to include the appropriate features and punctuation in their writing. They approach English lessons with a positive attitude and consistently try their best.
+
+EXAMPLE 2 (Working Towards Target):
+Child A enjoys taking part in English lessons and particularly likes listening to stories and sharing their ideas during class discussions. They are developing their reading skills and are beginning to use what they have learned from reading to support their writing. Child A listens carefully to instructions and is working hard to include key features and punctuation in their writing. With continued practice and encouragement, they will continue to grow in confidence and make good progress towards the expected standard.
+
+EXAMPLE 3 (Below Target):
+Child A enjoys taking part in English lessons and particularly likes listening to stories and sharing their ideas during class discussions. They are currently working below the expected standard in English and find some aspects of reading and writing challenging. Child A is developing their reading skills and is beginning to use what they have learned from reading to support their writing, although they require regular support and guidance to do this successfully. They listen carefully to instructions and are working hard to include key features and punctuation in their writing. With continued practice, targeted support and encouragement, Child A will continue to develop their confidence and make progress in their English learning.
+
+Now write a report in exactly the same style for the following pupil. Replace "Child A" with the pupil's actual name. Write only the report paragraph, with no preamble or labels.
 
 Pupil Name: {name}
 Subject: {subject}
 Ability Level: {ability}
-Teacher Notes: {notes}
-
-Write only the report paragraph, with no preamble or labels."""
+Teacher Notes: {notes}"""
 
         with st.spinner("GENERATING REPORT..."):
             res = requests.post(
